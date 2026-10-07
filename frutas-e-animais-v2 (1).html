@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Frutas & Animais</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f6f7f4;--card:#fff;--tx:#1d2a1f;--mut:#667;--bd:#dde2d8;--ok:#2e9e4f;--sel:#f2b705;--paid:#d9363e;--res:#3b7dd8;--ac:#1f7a3d}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#121612;--card:#1b221c;--tx:#eef3ee;--mut:#9aa89b;--bd:#2c372d;--ac:#4cc275}}
+:root[data-theme="dark"]{--bg:#121612;--card:#1b221c;--tx:#eef3ee;--mut:#9aa89b;--bd:#2c372d;--ac:#4cc275}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.4}
+.w{max-width:760px;margin:0 auto;padding:14px}
+h1{margin:4px 0 2px;font-size:24px}
+.sub{color:var(--mut);font-size:14px;margin-bottom:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:12px;margin-bottom:12px}
+.st{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.st div{text-align:center;padding:8px 2px;border-radius:10px;background:var(--bg)}
+.st b{display:block;font-size:18px}
+.st span{font-size:11px;color:var(--mut)}
+input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:16px;margin-bottom:8px}
+.lg{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:8px 0}
+.lg i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+#g{display:grid;grid-template-columns:repeat(auto-fill,minmax(48px,1fr));gap:5px;max-height:50vh;overflow-y:auto;padding:2px}
+.n{padding:10px 0;border:0;border-radius:8px;font-weight:600;font-size:13px;cursor:pointer;color:#fff;background:var(--ok)}
+.n.s{background:var(--sel);color:#222}
+.n.p{background:var(--paid);cursor:not-allowed;opacity:.85}
+.n.r{background:var(--res);cursor:not-allowed;opacity:.85}
+.btn{width:100%;padding:13px;border:0;border-radius:10px;background:var(--ac);color:#fff;font-size:16px;font-weight:700;cursor:pointer;margin-top:6px}
+.btn.o{background:transparent;color:var(--ac);border:1px solid var(--ac)}
+.btn.sm{width:auto;padding:6px 10px;font-size:13px;margin:0 4px 0 0}
+.btn:disabled{opacity:.5}
+.tot{display:flex;justify-content:space-between;font-size:17px;margin:6px 0}
+.qr{background:#fff;padding:8px;border-radius:10px;max-width:240px;margin:8px auto}
+.qr svg{width:100%;height:auto;display:block}
+.code{font-size:11px;word-break:break-all;background:var(--bg);padding:8px;border-radius:8px;max-height:64px;overflow:auto}
+.timer{text-align:center;font-size:28px;font-weight:800;color:var(--sel)}
+.aviso{font-size:12px;color:var(--mut);text-align:center;margin-top:6px}
+.hide{display:none}
+.row{border-top:1px solid var(--bd);padding:8px 0;font-size:13px}
+.tag{padding:2px 8px;border-radius:99px;color:#fff;font-size:11px}
+</style>
+</head>
+<body>
+<div class="w">
+<h1>🍓🐘 Frutas & Animais</h1>
+<div class="sub">Escolha seus números · R$ 1,00 cada · reserva de 10 minutos</div>
+
+<div class="card st">
+<div><b id="cD">0</b><span>Livres</span></div>
+<div><b id="cS">0</b><span>Escolhidos</span></div>
+<div><b id="cR">0</b><span>Reservados</span></div>
+<div><b id="cP">0</b><span>Pagos</span></div>
+</div>
+
+<div class="card">
+<input id="q" type="search" inputmode="numeric" placeholder="🔎 Buscar número (ex: 245)">
+<div class="lg"><span><i style="background:var(--ok)"></i>Livre</span><span><i style="background:var(--sel)"></i>Escolhido</span><span><i style="background:var(--res)"></i>Reservado</span><span><i style="background:var(--paid)"></i>Pago</span></div>
+<div id="g"></div>
+</div>
+
+<div class="card" id="form">
+<input id="nome" placeholder="👤 Seu nome" autocomplete="name">
+<input id="tel" type="tel" placeholder="📱 Telefone / WhatsApp" autocomplete="tel">
+<div class="tot"><span id="qtd">0 números</span><b id="tot">R$ 0,00</b></div>
+<div id="sl" class="sub" style="margin:0 0 6px"></div>
+<button class="btn" id="pagar" disabled>Reservar e pagar</button>
+<button class="btn o" id="limpar">Limpar seleção</button>
+</div>
+
+<div class="card hide" id="pix">
+<b>💚 Pagamento via Pix</b>
+<div class="aviso">Sua reserva expira em</div>
+<div class="timer" id="tm">10:00</div>
+<div class="tot"><span id="pn"></span><b id="pv"></b></div>
+<div class="qr" id="qr"></div>
+<div class="aviso">Escaneie o QR Code ou use o Pix copia e cola:</div>
+<div class="code" id="code"></div>
+<button class="btn" id="copiar">📋 Copiar Pix copia e cola</button>
+<button class="btn o" id="simular">Simular pagamento confirmado</button>
+<button class="btn o" id="cancelar">Cancelar reserva</button>
+<div class="aviso">Protótipo: o pagamento só é confirmado manualmente (simulação ou painel admin).</div>
+</div>
+
+<button class="btn o" id="adm">🔐 Painel administrativo</button>
+
+<div class="card hide" id="admin">
+<b>Painel administrativo</b>
+<div class="tot"><span>Arrecadado (pagos)</span><b id="arr"></b></div>
+<div id="lista"></div>
+<button class="btn" id="csv">⬇️ Exportar CSV</button>
+<button class="btn o" id="reset">Apagar todos os dados</button>
+</div>
+</div>
+
+<script>
+const TOTAL=1500,PRECO=1,MIN=10,PIN='1234';
+const CFG={chave:'+5521999876030',nome:'FRUTAS E ANIMAIS',cidade:'RIO DE JANEIRO'};
+const KEY='fa_v2',CUR='fa_cur';
+let orders=[],sel=new Set(),cur=null;
+try{orders=JSON.parse(localStorage.getItem(KEY)||'[]');cur=localStorage.getItem(CUR)}catch(e){}
+const $=id=>document.getElementById(id);
+const pad=n=>String(n).padStart(3,'0');
+const brl=v=>v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(orders));cur?localStorage.setItem(CUR,cur):localStorage.removeItem(CUR)}catch(e){}};
+
+/* Pix BR Code (estático) */
+const tlv=(i,v)=>i+String(v.length).padStart(2,'0')+v;
+function crc16(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=c&0x8000?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
+function pixCode(valor,txid){
+  const p=tlv('00','01')+tlv('26',tlv('00','br.gov.bcb.pix')+tlv('01',CFG.chave))+tlv('52','0000')+tlv('53','986')+
+    tlv('54',valor.toFixed(2))+tlv('58','BR')+tlv('59',CFG.nome)+tlv('60',CFG.cidade)+tlv('62',tlv('05',txid))+'6304';
+  return p+crc16(p);
+}
+
+/* grade */
+const g=$('g'),btns=[];
+for(let i=1;i<=TOTAL;i++){const b=document.createElement('button');b.className='n';b.textContent=pad(i);b.dataset.n=i;btns.push(b);g.appendChild(b)}
+g.addEventListener('click',e=>{
+  const b=e.target.closest('.n');if(!b)return;
+  const n=+b.dataset.n,m=mapa();if(m[n])return;
+  sel.has(n)?sel.delete(n):sel.add(n);render();
+});
+function purge(){
+  const now=Date.now();let ch=false;
+  orders.forEach(o=>{if(o.status==='reservado'&&o.expira<now){o.status='expirado';ch=true}});
+  if(ch)save();return ch;
+}
+function mapa(){const m={};orders.forEach(o=>{if(o.status==='pago'||o.status==='reservado')o.nums.forEach(n=>m[n]=o.status==='pago'?'p':'r')});return m}
+function render(){
+  const m=mapa();let p=0,r=0;
+  btns.forEach((b,i)=>{const n=i+1,s=m[n];if(s==='p')p++;else if(s==='r')r++;b.className='n'+(s?' '+s:sel.has(n)?' s':'')});
+  $('cP').textContent=p;$('cR').textContent=r;$('cS').textContent=sel.size;$('cD').textContent=TOTAL-p-r-sel.size;
+  $('qtd').textContent=sel.size+(sel.size===1?' número':' números');
+  $('tot').textContent=brl(sel.size*PRECO);
+  const l=[...sel].sort((a,b)=>a-b).map(pad);
+  $('sl').textContent=l.length?l.slice(0,40).join(', ')+(l.length>40?' …':''):'';
+  $('pagar').disabled=!sel.size;
+  showPix();renderAdmin();
+}
+$('q').addEventListener('input',e=>{
+  const n=parseInt(e.target.value,10);
+  if(n>=1&&n<=TOTAL){btns[n-1].scrollIntoView({block:'center',behavior:'smooth'});
+    btns[n-1].style.outline='3px solid var(--ac)';setTimeout(()=>btns[n-1].style.outline='',1800)}
+});
+$('limpar').onclick=()=>{sel.clear();render()};
+
+$('pagar').onclick=()=>{
+  if(!$('nome').value.trim()||$('tel').value.replace(/\D/g,'').length<10){alert('Preencha seu nome e um telefone/WhatsApp válido.');return}
+  const m=mapa();
+  if([...sel].some(n=>m[n])){alert('Algum número acabou de ser reservado por outra pessoa.');sel=new Set([...sel].filter(n=>!m[n]));render();return}
+  const o={id:Date.now().toString(36).toUpperCase(),nome:$('nome').value.trim(),tel:$('tel').value.trim(),
+    nums:[...sel].sort((a,b)=>a-b),total:sel.size*PRECO,status:'reservado',criado:Date.now(),expira:Date.now()+MIN*60000};
+  orders.push(o);cur=o.id;sel.clear();save();render();$('pix').scrollIntoView({behavior:'smooth'});
+};
+let shown=null;
+function showPix(){
+  const o=orders.find(x=>x.id===cur&&x.status==='reservado');
+  if(!o){$('pix').classList.add('hide');shown=null;if(cur&&!o){cur=null;save()}return}
+  $('pix').classList.remove('hide');
+  $('pn').textContent=o.nums.length+(o.nums.length===1?' número':' números');
+  $('pv').textContent=brl(o.total);
+  if(shown!==o.id){
+    shown=o.id;const c=pixCode(o.total,'FA'+o.id);$('code').textContent=c;
+    try{const q=qrcode(0,'M');q.addData(c);q.make();$('qr').innerHTML=q.createSvgTag({cellSize:4,margin:2,scalable:true})}
+    catch(e){$('qr').textContent='QR Code indisponível — use o copia e cola.'}
+  }
+  tick();
+}
+function tick(){
+  const o=orders.find(x=>x.id===cur&&x.status==='reservado');if(!o)return;
+  const s=Math.max(0,Math.round((o.expira-Date.now())/1000));
+  $('tm').textContent=String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+}
+setInterval(()=>{if(purge())render();else tick()},1000);
+$('copiar').onclick=async()=>{
+  const t=$('code').textContent;
+  try{await navigator.clipboard.writeText(t)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy')}catch(_){}a.remove()}
+  $('copiar').textContent='✅ Copiado!';setTimeout(()=>$('copiar').textContent='📋 Copiar Pix copia e cola',2000);
+};
+function setStatus(id,s){const o=orders.find(x=>x.id===id);if(o){o.status=s;if(s==='pago')o.pagoEm=Date.now()}if(cur===id&&s!=='reservado')cur=null;save();render()}
+$('simular').onclick=()=>{setStatus(cur,'pago');alert('Pagamento simulado com sucesso! 🎉')};
+$('cancelar').onclick=()=>setStatus(cur,'cancelado');
+
+/* admin */
+let adminOn=false;
+$('adm').onclick=()=>{
+  if(!adminOn){if(prompt('PIN do administrador (protótipo: 1234):')!==PIN)return;adminOn=true}
+  $('admin').classList.toggle('hide');renderAdmin();
+};
+const cores={pago:'#d9363e',reservado:'#3b7dd8',expirado:'#888',cancelado:'#888'};
+function renderAdmin(){
+  if($('admin').classList.contains('hide'))return;
+  $('arr').textContent=brl(orders.filter(o=>o.status==='pago').reduce((a,o)=>a+o.total,0));
+  const l=[...orders].reverse();
+  $('lista').innerHTML=l.length?l.map(o=>`<div class="row"><b>${esc(o.nome)}</b> · ${esc(o.tel)} · ${brl(o.total)}
+    <span class="tag" style="background:${cores[o.status]}">${o.status}</span><br>
+    <span style="color:var(--mut)">${o.nums.map(pad).join(', ')}</span><br>
+    ${o.status==='reservado'?`<button class="btn sm" data-a="pago" data-id="${o.id}">Confirmar pagamento</button><button class="btn sm o" data-a="cancelado" data-id="${o.id}">Liberar</button>`:''}</div>`).join(''):'<div class="aviso">Nenhum pedido ainda.</div>';
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('lista').addEventListener('click',e=>{const b=e.target.closest('button[data-id]');if(b)setStatus(b.dataset.id,b.dataset.a)});
+$('csv').onclick=()=>{
+  const rows=[['id','nome','telefone','numeros','total','status']].concat(orders.map(o=>[o.id,o.nome,o.tel,o.nums.join(' '),o.total,o.status]));
+  const t=rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  $('csv').textContent='Copiando…';
+  navigator.clipboard.writeText(t).then(()=>$('csv').textContent='✅ CSV copiado para a área de transferência',()=>{prompt('Copie o CSV:',t)});
+  setTimeout(()=>$('csv').textContent='⬇️ Exportar CSV',2500);
+};
+$('reset').onclick=()=>{if(!confirm('Apagar todos os pedidos?'))return;orders=[];cur=null;sel.clear();save();render()};
+purge();render();
+</script>
+</body>
+</html>
